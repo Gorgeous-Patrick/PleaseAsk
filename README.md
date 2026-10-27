@@ -21,6 +21,12 @@ CC=/path/to/llvm/bin/clang ./build-web.sh
 
 The built static site is `web/`. Host that directory on HTTPS so phones can open it. For local development on the same machine, `python3 -m http.server 8080 --directory web` and `http://localhost:8080/?teacher` work. A phone cannot use your computer's `localhost`; use an HTTPS host for the classroom.
 
+## GitHub Pages
+
+The workflow in `.github/workflows/pages.yml` runs the JavaScript tests, builds the Rust/WASM bundle, and deploys `web/` whenever `main` is pushed. In the repository's **Settings → Pages → Build and deployment**, select **GitHub Actions** as the source. The site will be at `https://gorgeous-patrick.github.io/PleaseAsk/`; open `https://gorgeous-patrick.github.io/PleaseAsk/?teacher` for the teacher desk. The workflow also supports manual runs from the **Actions** tab.
+
+GitHub Pages provides HTTPS and hosts the static files. The teacher browser still owns the Iroh endpoint and must keep its tab open during class.
+
 ## Use
 
 1. Open `https://your-host.example/?teacher` in the teacher browser and keep the tab open. The first visit creates the key in that browser.
