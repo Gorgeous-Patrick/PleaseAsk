@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <title>Please Ask</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand"><span class="brand-icon">✳</span> Please Ask</div>
+        <div id="connection-status" class="status">Loading…</div>
+      </header>
+
+      <section id="teacher-view" class="view" hidden>
+        <div class="teacher-heading">
+          <div>
+            <p class="eyebrow">Teacher desk</p>
+            <h1>Class conversations</h1>
+            <p class="subtle">Keep this tab open to chat with students.</p>
+          </div>
+          <div class="teacher-actions">
+            <div class="count"><strong id="unread-count">0</strong><span>unread</span></div>
+            <button id="end-class" class="danger" type="button">End class</button>
+          </div>
+        </div>
+        <div class="teacher-grid">
+          <div class="teacher-sidebar">
+            <section class="panel join-panel">
+              <h2>Invite students</h2>
+              <p>Open a clean QR display for your projector.</p>
+              <a id="open-invite" class="display-link" target="_blank" rel="noopener">Open QR display ↗</a>
+              <div class="link-row">
+                <input id="join-link" aria-label="Student join link" readonly />
+                <button id="copy-link" class="secondary">Copy</button>
+              </div>
+              <p class="tiny">Identity: <code id="teacher-id"></code></p>
+            </section>
+            <section class="panel thread-list-panel">
+              <div class="section-title"><h2>Students</h2><span id="thread-count">0 conversations</span></div>
+              <div id="thread-list" class="thread-list">
+                <p class="empty-thread-list">Students will appear here when they join.</p>
+              </div>
+            </section>
+          </div>
+          <section class="panel conversation-panel">
+            <div id="conversation-empty" class="conversation-empty">Choose a student to see the full conversation.</div>
+            <div id="conversation-active" class="conversation-active" hidden>
+              <div class="conversation-heading">
+                <div class="avatar">✳</div>
+                <div><h2 id="conversation-title"></h2><p id="conversation-presence"></p></div>
+              </div>
+              <div id="teacher-messages" class="messages" aria-live="polite"></div>
+              <form id="teacher-form" class="composer">
+                <label for="teacher-message" class="sr-only">Message to student</label>
+                <textarea id="teacher-message" placeholder="Message this student…" maxlength="4096" rows="1" required></textarea>
+                <button id="teacher-send" type="submit" aria-label="Send message">➤</button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="student-view" class="view student-view" hidden>
+        <div class="chat-heading">
+          <div class="avatar">✳</div>
+          <div><h1>Class assistant</h1><p>Ask what’s on your mind.</p></div>
+        </div>
+        <div id="messages" class="messages" aria-live="polite">
+          <div class="message assistant"><div class="bubble">Hi! What would you like to ask?</div></div>
+        </div>
+        <form id="ask-form" class="composer">
+          <label for="question" class="sr-only">Your question</label>
+          <textarea id="question" placeholder="Ask a question…" maxlength="4096" rows="1" required></textarea>
+          <button id="send-button" type="submit" aria-label="Send question">➤</button>
+        </form>
+        <div class="student-footer"><p id="student-note" class="student-note">Answers may take a moment.</p><button id="student-reconnect" class="secondary" hidden>Reconnect</button></div>
+      </section>
+
+      <section id="error-view" class="view error-view" hidden>
+        <div class="avatar">✳</div>
+        <h1>Couldn’t connect</h1>
+        <p id="error-message"></p>
+        <button id="retry-button">Try again</button>
+      </section>
+
+      <section id="ended-view" class="view error-view" hidden>
+        <div class="avatar">✳</div>
+        <h1 id="ended-title">Class ended</h1>
+        <p id="ended-message"></p>
+        <button id="start-new-class" hidden>Start a new class</button>
+      </section>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
