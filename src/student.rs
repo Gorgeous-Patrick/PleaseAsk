@@ -1,7 +1,7 @@
 use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
 
 use iroh::{
-    Endpoint, EndpointAddr, EndpointId, RelayUrl, SecretKey,
+    Endpoint, EndpointAddr, EndpointId, RelayMap, RelayMode, RelayUrl, SecretKey,
     endpoint::{RecvStream, SendStream, presets},
 };
 use js_sys::Function;
@@ -38,9 +38,10 @@ impl Student {
         on_disconnect: Function,
     ) -> Result<Student, JsError> {
         let id: EndpointId = id.parse().map_err(js_error)?;
-        let relay: RelayUrl = relay.parse().map_err(js_error)?;
+        let relay: RelayUrl = without_trailing_relay_dot(&relay).parse().map_err(js_error)?;
         let address = EndpointAddr::new(id).with_relay_url(relay);
         let endpoint = Endpoint::builder(presets::N0)
+            .relay_mode(browser_relay_mode()?)
             .secret_key(secret_from_hex(&key_hex)?)
             .bind()
             .await
@@ -86,6 +87,7 @@ impl Teacher {
         on_peer: Function,
     ) -> Result<Teacher, JsError> {
         let endpoint = Endpoint::builder(presets::N0)
+            .relay_mode(browser_relay_mode()?)
             .secret_key(secret_from_hex(&key_hex)?)
             .alpns(vec![ALPN.to_vec()])
             .bind()
@@ -205,6 +207,21 @@ fn secret_from_hex(key_hex: &str) -> Result<SecretKey, JsError> {
     let bytes = hex::decode(key_hex).map_err(js_error)?;
     let bytes: [u8; 32] = bytes.try_into().map_err(|_| JsError::new("Invalid browser key"))?;
     Ok(SecretKey::from_bytes(&bytes))
+}
+
+fn browser_relay_mode() -> Result<RelayMode, JsError> {
+    // Iroh 1.3's production hostnames end in a dot. Safari on iOS rejects
+    // HTTPS/WebSocket connections to those relay URLs.
+    let urls: Vec<RelayUrl> = iroh::defaults::prod::default_relay_map().urls();
+    let urls: Vec<String> = urls.iter()
+        .map(|url| without_trailing_relay_dot(&url.to_string()))
+        .collect();
+    let map = RelayMap::try_from_iter(urls.iter().map(String::as_str)).map_err(js_error)?;
+    Ok(RelayMode::Custom(map))
+}
+
+fn without_trailing_relay_dot(url: &str) -> String {
+    url.replace(".iroh.link./", ".iroh.link/")
 }
 
 fn checked_frame(text: &str) -> Result<String, JsError> {

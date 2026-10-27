@@ -1,4 +1,4 @@
-import init, { Student, Teacher } from './wasm/pleaseask.js';
+import init, { Student, Teacher } from './wasm/pleaseask.js?v=ios-relay-1';
 import { createMessage, decodeMessage, encodeMessage, mergeMessage, normalizeHistory } from './history.mjs';
 import { ACTIVE_INVITE_KEY, END_ACK_FRAME, END_CLASS_FRAME, clearStudentStorage, clearTeacherStorage, controlType } from './session.mjs';
 
@@ -529,7 +529,7 @@ if (location.hash === '#ended') {
   showEndedPage();
 } else {
   try {
-    await init();
+    await init({ module_or_path: new URL('./wasm/pleaseask_bg.wasm?v=ios-relay-1', import.meta.url) });
     if (isTeacher) await startTeacher();
     else await startStudent();
   } catch (error) {

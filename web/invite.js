@@ -1,10 +1,10 @@
-import init, { qr_svg } from './wasm/pleaseask.js';
+import init, { qr_svg } from './wasm/pleaseask.js?v=ios-relay-1';
 import { ACTIVE_INVITE_KEY } from './session.mjs';
 
 const qr = document.getElementById('qr');
 const initialJoinLink = new URLSearchParams(location.search).get('join');
 
-await init();
+await init({ module_or_path: new URL('./wasm/pleaseask_bg.wasm?v=ios-relay-1', import.meta.url) });
 
 function showInvitation(url) {
   if (typeof url !== 'string') return;
